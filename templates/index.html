@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Abstract Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .input-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .papers-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .papers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .papers-header h2 {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .paper-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .papers-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .paper-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+
+        .paper-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .paper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .paper-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            flex: 1;
+        }
+
+        .paper-url {
+            font-size: 0.9rem;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 10px;
+            display: inline-block;
+            word-break: break-all;
+        }
+
+        .paper-url:hover {
+            text-decoration: underline;
+        }
+
+        .paper-abstract {
+            color: #666;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-processing {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .message.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Paper Abstract Manager</h1>
+        
+        <div class="input-section">
+            <div id="message" class="message"></div>
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="paperUrl" 
+                    placeholder="Enter paper URL (e.g., https://arxiv.org/pdf/2408.09869 or https://www.nature.com/articles/...)"
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="btn-primary" onclick="addPaper()">Add Paper</button>
+            </div>
+            <button class="btn-success" onclick="exportToMarkdown()" style="width: 100%;">
+                Export All to Markdown
+            </button>
+        </div>
+
+        <div class="papers-section">
+            <div class="papers-header">
+                <h2>Papers</h2>
+                <span class="paper-count" id="paperCount">0 papers</span>
+            </div>
+            <div id="papersList" class="papers-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let papers = [];
+
+        // Load papers on page load
+        window.addEventListener('DOMContentLoaded', loadPapers);
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addPaper();
+            }
+        }
+
+        async function loadPapers() {
+            try {
+                const response = await fetch('/api/papers');
+                papers = await response.json();
+                renderPapers();
+            } catch (error) {
+                showMessage('Failed to load papers: ' + error.message, 'error');
+            }
+        }
+
+        async function addPaper() {
+            const urlInput = document.getElementById('paperUrl');
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showMessage('Please enter a paper URL', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Processing paper...', 'success');
+                const response = await fetch('/api/papers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url }),
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to add paper');
+                }
+
+                const paper = await response.json();
+                papers.push(paper);
+                urlInput.value = '';
+                renderPapers();
+                showMessage('Paper added successfully!', 'success');
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function deletePaper(paperId) {
+            if (!confirm('Are you sure you want to remove this paper?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/papers/${paperId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    papers = papers.filter(p => p.id !== paperId);
+                    renderPapers();
+                    showMessage('Paper removed successfully', 'success');
+                } else {
+                    throw new Error('Failed to delete paper');
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+
+        async function exportToMarkdown() {
+            if (papers.length === 0) {
+                showMessage('No papers to export', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Exporting papers...', 'success');
+                const response = await fetch('/api/export', {
+                    method: 'POST',
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to export');
+                }
+
+                const result = await response.json();
+                showMessage(`Papers exported to ${result.filename}!`, 'success');
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+
+        function renderPapers() {
+            const papersList = document.getElementById('papersList');
+            const paperCount = document.getElementById('paperCount');
+            
+            paperCount.textContent = `${papers.length} paper${papers.length !== 1 ? 's' : ''}`;
+
+            if (papers.length === 0) {
+                papersList.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p style="font-size: 1.2rem;">No papers yet</p>
+                        <p>Add paper URLs above to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            papersList.innerHTML = papers.map(paper => `
+                <div class="paper-card">
+                    <div class="paper-header">
+                        <div style="flex: 1;">
+                            <div class="paper-title">${escapeHtml(paper.title)}</div>
+                            <a href="${escapeHtml(paper.url)}" target="_blank" class="paper-url">${escapeHtml(paper.url)}</a>
+                        </div>
+                        <button class="btn-danger" onclick="deletePaper(${paper.id})">Remove</button>
+                    </div>
+                    ${paper.abstract ? `
+                        <div class="paper-abstract">${escapeHtml(paper.abstract)}</div>
+                    ` : '<div class="paper-abstract" style="font-style: italic; color: #999;">No abstract found</div>'}
+                </div>
+            `).join('');
+        }
+
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = message;
+            messageEl.className = `message ${type} show`;
+            
+            setTimeout(() => {
+                messageEl.classList.remove('show');
+            }, 5000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
