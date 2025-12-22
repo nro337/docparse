@@ -2,6 +2,8 @@
 
 from docling.document_converter import DocumentConverter
 
+from src.abstract_extractor import extract_abstract
+
 
 def main():
     """_summary_"""
@@ -13,6 +15,15 @@ def main():
     markdown_text = result.document.export_to_markdown()
     with open("output.md", "w", encoding="utf-8") as f:
         f.write(markdown_text)
+
+    # Extract and display the abstract
+    abstract = extract_abstract(markdown_text)
+    if abstract:
+        print("\n=== ABSTRACT ===")
+        print(abstract)
+        print("\n")
+    else:
+        print("No abstract found in the document.")
 
 
 if __name__ == "__main__":
