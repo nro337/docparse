@@ -25,6 +25,7 @@ uv sync
 uv run python app.py
 ```
 
+   This command starts the Flask server in **debug mode**, which is intended for local development only. Do **not** use this mode in production; for a production deployment, run the app with debug disabled and behind a production-ready WSGI server.
 2. Open your browser and navigate to:
 ```
 http://localhost:5000
