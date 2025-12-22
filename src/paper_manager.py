@@ -28,15 +28,39 @@ class PaperManager:
     def _load_papers(self):
         """Load papers from storage file."""
         if Path(self.storage_file).exists():
-            with open(self.storage_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
+            try:
+                with open(self.storage_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except (OSError, IOError) as e:
+                # If we cannot read the storage file, start with empty data
+                print(
+                    f"Warning: Could not read storage file '{self.storage_file}': {e}. "
+                    "Starting with empty paper list."
+                )
+                self.papers = []
+                self.next_id = 1
+            except json.JSONDecodeError as e:
+                # If the storage file is corrupted, start with empty data
+                print(
+                    f"Warning: Storage file '{self.storage_file}' is not valid JSON: {e}. "
+                    "Starting with empty paper list."
+                )
+                self.papers = []
+                self.next_id = 1
+            else:
                 self.papers = data.get("papers", [])
                 self.next_id = data.get("next_id", 1)
 
     def _save_papers(self):
         """Save papers to storage file."""
-        with open(self.storage_file, "w", encoding="utf-8") as f:
-            json.dump({"papers": self.papers, "next_id": self.next_id}, f, indent=2)
+        try:
+            with open(self.storage_file, "w", encoding="utf-8") as f:
+                json.dump({"papers": self.papers, "next_id": self.next_id}, f, indent=2)
+        except (OSError, IOError) as e:
+            # If we cannot write to the storage file, keep running but report the error
+            print(
+                f"Error: Failed to save papers to storage file '{self.storage_file}': {e}."
+            )
 
     def add_paper(self, url: str) -> Dict:
         """Add a new paper by URL.
