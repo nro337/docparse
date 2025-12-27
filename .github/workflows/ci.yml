@@ -3,7 +3,7 @@ name: CI Workflow
 on:
   push:
     branches:
-      - issue-5-resolution
+      - main
   pull_request:
 
 jobs:
@@ -17,27 +17,15 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.x'
+        python-version: '3.14'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install pytest flake8 pytest-cov coverage-badge
+        uv sync --dev
 
-    - name: Run pytest with coverage
+    - name: Lint with ruff
       run: |
-        pytest --cov=.
-
-    - name: Lint with flake8
-      run: |
-        flake8 .
-
-    - name: Generate coverage badge
-      run: |
-        coverage-badge -o coverage.svg -f
-
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage-report
-        path: coverage.svg
+        uv run ruff check
