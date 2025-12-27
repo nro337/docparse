@@ -1,6 +1,5 @@
 """Tests for abstract extraction functionality."""
 
-import pytest
 
 from src.abstract_extractor import extract_abstract
 
