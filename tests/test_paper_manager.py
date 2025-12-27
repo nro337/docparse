@@ -1,6 +1,7 @@
 """Tests for paper management functionality."""
 
 import json
+import os
 import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -188,8 +189,6 @@ class TestPaperManager:
             paper_manager.add_paper("https://example.com/paper")
 
             # Change to tmp directory
-            import os
-
             original_dir = os.getcwd()
             os.chdir(tmp_path)
 
@@ -218,8 +217,6 @@ class TestPaperManager:
             paper_manager.add_paper("https://example.com/paper")
 
             # Change to tmp directory
-            import os
-
             original_dir = os.getcwd()
             os.chdir(tmp_path)
 
