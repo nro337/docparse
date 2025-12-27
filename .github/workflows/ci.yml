@@ -1,0 +1,43 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - issue-5-resolution
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest flake8 pytest-cov coverage-badge
+
+    - name: Run pytest with coverage
+      run: |
+        pytest --cov=.
+
+    - name: Lint with flake8
+      run: |
+        flake8 .
+
+    - name: Generate coverage badge
+      run: |
+        coverage-badge -o coverage.svg -f
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage.svg
