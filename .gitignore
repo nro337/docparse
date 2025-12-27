@@ -9,8 +9,10 @@ wheels/
 # Virtual environments
 .venv
 
-# Coverage reports
-htmlcov/
+# Test and coverage artifacts
+.pytest_cache/
 .coverage
+htmlcov/
+*.cover
 
 output.md

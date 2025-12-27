@@ -54,3 +54,24 @@ To format the code, run:
 ```bash
 ruff format
 ```
+
+## To run tests
+Run the test suite with:
+```bash
+pytest
+```
+
+For more verbose output:
+```bash
+pytest -v
+```
+
+To run tests with coverage:
+```bash
+pytest --cov=src --cov-report=term-missing
+```
+
+To generate HTML coverage report:
+```bash
+pytest --cov=src --cov-report=html
+```
