@@ -9,4 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
+# Coverage reports
+htmlcov/
+.coverage
+
 output.md
